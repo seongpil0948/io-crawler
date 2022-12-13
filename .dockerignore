@@ -1,0 +1,7 @@
+out/**
+ref
+**/__pycache__
+.vscode
+.gitignore
+**/*.log
+**/*.ipynb
