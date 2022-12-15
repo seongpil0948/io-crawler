@@ -10,6 +10,8 @@ print("credential:", credential)
 fire_app = firebase_admin.initialize_app(credential, name="fire_app")
 print("fire_app: ", fire_app)
 
+def get_fire_app():
+    return get_app(name="fire_app")
 
 def exist_db_vendor_prod_ids():
     db = firestore.client(get_app(name="fire_app"))

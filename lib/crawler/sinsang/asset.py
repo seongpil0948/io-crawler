@@ -18,7 +18,7 @@ PROD_LIST_URLS: list[ProdListObj] = [
         part="OUTER",
         ctgr="ETC",
         gender="FEMALE",
-        max_page=1
+        max_page=5
     ),
     # ProdListObj(
     #     # 남성의류 > 아우터
@@ -33,7 +33,7 @@ PROD_LIST_URLS: list[ProdListObj] = [
         part="TOP",
         ctgr="ETC",
         gender="FEMALE",
-        max_page=2
+        max_page=5
     ),
     # ProdListObj(
     #     # 남성의류 > 티&탑
@@ -48,21 +48,22 @@ PROD_LIST_URLS: list[ProdListObj] = [
         url=PROD_LIST_URL_BASE + "?catItemId=1&catGenderId=1&catId=3",
         part="DRESS",
         ctgr="ONE_PIECE",
-        gender="FEMALE", max_page=2
+        gender="FEMALE", max_page=5
     ),
     ProdListObj(
         # 여성의류 > 블라우스
         url=PROD_LIST_URL_BASE + "?catId=4&catItemId=1&catGenderId=1",
         part="TOP",
         ctgr="BLOUSE",
-        gender="FEMALE", max_page=2
+        gender="FEMALE", max_page=5
     ),
     ProdListObj(
         # 여성의류 > 니트
         url=PROD_LIST_URL_BASE + "?catId=5&catItemId=1&catGenderId=1",
         part="TOP",
         ctgr="KNIT",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     # ProdListObj(
     #     # 남성의류 > 니트
@@ -76,28 +77,29 @@ PROD_LIST_URLS: list[ProdListObj] = [
         url=PROD_LIST_URL_BASE + "?catId=6&catItemId=1&catGenderId=1",
         part="BOTTOM",
         ctgr="JEANS",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성의류 > 팬츠
         url=PROD_LIST_URL_BASE + "?catId=7&catItemId=1&catGenderId=1",
         part="BOTTOM",
         ctgr="PANTS",
-        gender="FEMALE", max_page=2
+        gender="FEMALE", max_page=5
     ),
     ProdListObj(
         # 여성의류 > 스커트
         url=PROD_LIST_URL_BASE + "?catId=8&catItemId=1&catGenderId=1",
         part="BOTTOM",
         ctgr="SKIRTS",
-        gender="FEMALE", max_page=2
+        gender="FEMALE", max_page=5
     ),
     ProdListObj(
         # 여성의류 > 셔츠/남방
         url=PROD_LIST_URL_BASE + "?catId=95&catItemId=1&catGenderId=1",
         part="TOP",
         ctgr="SHIRT",
-        gender="FEMALE", max_page=2
+        gender="FEMALE", max_page=5
     ),
     # ProdListObj(
     #     # 남성의류 > 셔츠/남방
@@ -111,21 +113,24 @@ PROD_LIST_URLS: list[ProdListObj] = [
         url=PROD_LIST_URL_BASE + "?catId=94&catItemId=1&catGenderId=1",
         part="ETC",
         ctgr="TOP_BOTTOM_SET",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성의류 > 빅사이즈
         url=PROD_LIST_URL_BASE + "?catId=96&catItemId=1&catGenderId=1",
         part="ETC",
         ctgr="BIG_SIZE",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성의류 > 임부복
         url=PROD_LIST_URL_BASE + "?catId=97&catItemId=1&catGenderId=1",
         part="ETC",
         ctgr="MATERNITY",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     # ProdListObj(
     #     # 남성의류 > 수트
@@ -153,49 +158,56 @@ PROD_LIST_URLS: list[ProdListObj] = [
         url=PROD_LIST_URL_BASE + "?catId=20&catItemId=2&catGenderId=1",
         part="SHOES",
         ctgr="LOAFERS",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 신발 > 힐/펌프스
         url=PROD_LIST_URL_BASE + "?catId=21&catItemId=2&catGenderId=1",
         part="SHOES",
         ctgr="PUMPS",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 신발 > 웨지힐
         url=PROD_LIST_URL_BASE + "?catId=22&catItemId=2&catGenderId=1",
         part="SHOES",
         ctgr="WEDGE_HEEL",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 신발 > 샌들/슬리퍼
         url=PROD_LIST_URL_BASE + "?catId=23&catItemId=2&catGenderId=1",
         part="SHOES",
         ctgr="SLIPPERS",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 신발 > 스니커즈/운동화
         url=PROD_LIST_URL_BASE + "?catId=24&catItemId=2&catGenderId=1",
         part="SHOES",
         ctgr="ATHLETIC",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 신발 > 워커/부츠
         url=PROD_LIST_URL_BASE + "?catId=25&catItemId=2&catGenderId=1",
         part="SHOES",
         ctgr="BOOTS",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 신발 > 수제화
         url=PROD_LIST_URL_BASE + "?catId=26&catItemId=2&catGenderId=1",
         part="SHOES",
         ctgr="HAND_MADE",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     # ProdListObj(
     #     # 남성 신발 > 로퍼/단화
@@ -244,49 +256,56 @@ PROD_LIST_URLS: list[ProdListObj] = [
         url=PROD_LIST_URL_BASE + "?catId=45&catItemId=3&catGenderId=1",
         part="BAG",
         ctgr="LEATHER",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 가방 > 숄더백
         url=PROD_LIST_URL_BASE + "?catId=46&catItemId=3&catGenderId=1",
         part="BAG",
         ctgr="SHOULDER",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 가방 > 토트백
         url=PROD_LIST_URL_BASE + "?catId=47&catItemId=3&catGenderId=1",
         part="BAG",
         ctgr="TOD_BAG",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 가방 > 크로스백
         url=PROD_LIST_URL_BASE + "?catId=48&catItemId=3&catGenderId=1",
         part="BAG",
         ctgr="CROSS",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 가방 > 클러치/지갑
         url=PROD_LIST_URL_BASE + "?catId=49&catItemId=3&catGenderId=1",
         part="BAG",
         ctgr="CLUTCH",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 가방 > 백팩
         url=PROD_LIST_URL_BASE + "?catId=50&catItemId=3&catGenderId=1",
         part="BAG",
         ctgr="BACKPACK",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     ProdListObj(
         # 여성 가방 > 기타
         url=PROD_LIST_URL_BASE + "?catId=51&catItemId=3&catGenderId=1",
         part="BAG",
         ctgr="ETC",
-        gender="FEMALE"
+        gender="FEMALE",
+        max_page=5
     ),
     # ProdListObj(
     #     # 남성 가방 > 숄더/토트백

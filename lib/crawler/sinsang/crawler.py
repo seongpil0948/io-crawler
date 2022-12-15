@@ -1,5 +1,8 @@
 from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from uuid import NAMESPACE_DNS, uuid4, uuid5
 import time
 from tqdm import tqdm
@@ -10,11 +13,11 @@ from lib.common.driver import get_driver
 from lib.crawler.sinsang.asset import PROD_LIST_URLS, ProdListObj
 from lib.crawler.sinsang.model import SinsangGarment
 from lib.util.firestore import exist_db_vendor_prod_ids
-
+from lib.logger import IoLogger
 from lib.common.model import TBD
 
 
-class SinsangCrawler():
+class SinsangCrawler(IoLogger):
     entry_url: str
     sinsang_id: str
     sinsang_pw: str
@@ -22,14 +25,25 @@ class SinsangCrawler():
     exist_ids: set[str]
     new_ids: set[str]
     lookup_ids: set[str]
+    name = "sinsang-crawler"
+
+    def dispose(self):
+        self.driver.close()
+        self.driver.quit()
+
+    def sleep(self, n: int):
+        self.driver.implicitly_wait(n * 5)
+        time.sleep(n)
 
     def __init__(self) -> None:
+        super().__init__(self.name)
         self.driver = get_driver()
         self.driver.implicitly_wait(3)
         self.entry_url = "https://sinsangmarket.kr"
-        self.sinsang_id = "bereshith"
+        self.sinsang_id = "dazzyvely"
         self.sinsang_pw = "*wldnjs0316*"
-        self.exist_ids = exist_db_vendor_prod_ids()
+        # FIXME self.exist_ids = exist_db_vendor_prod_ids()
+        self.exist_ids = set()
         self.exist_cnt = 0
         self.new_ids = set()
         self.lookup_ids = set()
@@ -37,25 +51,28 @@ class SinsangCrawler():
 
     def login(self):
         self.driver.get(self.entry_url)
-        time.sleep(2)
+        self.sleep(2)
         # >>> select page language >>>
         header = self.driver.find_element(
             by=By.CLASS_NAME, value="header-container")
-        header.find_element(by=By.CSS_SELECTOR,
-                            value="div.select-area").click()
+        area_selector = header.find_element(
+            by=By.CSS_SELECTOR, value="div.select-area")
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(area_selector))
+        area_selector.click()
         for i in self.driver.find_elements(by=By.CSS_SELECTOR, value="li.option-area__item"):
             if ("한국어" in i.text):
                 i.click()
                 break
         # >>> login process >>>
-        self.driver.implicitly_wait(3)
+        self.sleep(2)
         header = self.driver.find_element(
             by=By.CLASS_NAME, value="header-container")
         ps = header.find_elements(by=By.TAG_NAME, value="p")
         for p in ps:
             if (p.text == "로그인"):
                 p.click()  # 로그인 다이얼로그
-                self.driver.implicitly_wait(3)
+                self.sleep(2)
                 self.driver.find_element(
                     by=By.CSS_SELECTOR, value="input[placeholder='아이디']").send_keys(self.sinsang_id)
                 self.driver.implicitly_wait(3)
@@ -66,25 +83,34 @@ class SinsangCrawler():
                     by=By.TAG_NAME, value="button")
                 for btn in btns:
                     if (btn.text == "로그인"):
+                        WebDriverWait(self.driver, 15).until(
+                            EC.element_to_be_clickable(btn))
                         btn.click()  # 로그인!
+                        # btn.send_keys(Keys.ENTER)
+                        self.driver.execute_script(
+                            "document.querySelectorAll('.login_option button')[1].click();")
+                        # self.driver.execute_script("arguments[0].click();", btn)
+                        return
+        raise Exception("로그인 실패(fail to login)")
 
     def lets_crawl(self):
         try:
             self.login()
         except Exception as e:
-            print("error in login", e)
-            print(self.driver.get(self.entry_url))
-            time.sleep(1)
+            self.log.error(
+                f"occurred while login, url: {self.entry_url} error: {e}")
+            self.l(self.driver.get(self.entry_url))
+            self.sleep(1)
             el = self.driver.find_element(by=By.TAG_NAME, value="body")
-            print("el.text: ", el.text)
+            self.log.warning(f"url element text: {el.text}")
             raise e
-
-        time.sleep(1)
+        return self.dispose()
+        self.sleep(2)
         t_bar = tqdm(PROD_LIST_URLS)
         for i, obj in enumerate(t_bar):
-            desc = f"{obj.part}, {obj.ctgr}, {obj.gender}, max_page: {obj.max_page}, idx: {i}"
+            desc = f"process sinsang crawler {obj.part}, {obj.ctgr}, {obj.gender}, max_page: {obj.max_page}, idx: {i} url: {obj.url}"
             t_bar.set_description(desc=desc)
-            print(desc)
+            self.log.info(desc)
             try:
                 garments = self.crawl_prod_list(obj)
                 if len(garments) > 0:
@@ -96,12 +122,11 @@ class SinsangCrawler():
                         }, f)
                 self.driver.refresh()
             except Exception as e:
-                print(e)
+                self.log.error(f"while {desc} error: {e}")
                 continue
-            print("num of exist item: ", self.exist_cnt)
-            print("num of new item: ", len(list(self.new_ids)))
-        self.driver.close()
-        self.driver.quit()
+            self.log.info(f"num of exist item: {self.exist_cnt}")
+            self.log.info(f"num of new item: {len(list(self.new_ids))}")
+
         # with open("out/sinsang.json", 'w', encoding='UTF-8-sig') as outfile:
         #     gs = list(map(lambda x: x.__dict__, garments))
         #     outfile.write(
@@ -126,7 +151,7 @@ class SinsangCrawler():
                         continue
 
                     thumbnail.click()  # open detail product
-                    time.sleep(1)
+                    self.sleep(1)
                     vendorProdName = self.driver.find_element(
                         by=By.CSS_SELECTOR, value=".goods-detail-right p.title").text.strip()
                     price_str = self.driver.find_element(
@@ -198,9 +223,9 @@ class SinsangCrawler():
 
                     self.driver.find_element(
                         by=By.CSS_SELECTOR, value="img.close-button[alt='close-icon']").click()
-                time.sleep(1)
+                self.sleep(1)
             moreScroll = self.scrolling()
-            time.sleep(1)
+            self.sleep(1)
             if moreScroll == False or obj.max_page <= self.page:
                 break
 
@@ -210,10 +235,9 @@ class SinsangCrawler():
         scroll_pause_time = 1
         screen_height = self.driver.execute_script(
             "return window.screen.height;")
-        # driver.execute_script("window.scrollTo(0, {screen_height}*{i});".format(screen_height=screen_height, i=i))
+        factor = self.page * 2
         self.driver.execute_script(
-            "window.scrollTo(0, {screen_height});".format(screen_height=screen_height))
-        time.sleep(scroll_pause_time)
+            "window.scrollTo(0, {screen_height}*{factor});".format(screen_height=screen_height, factor=factor))
         scroll_height = self.driver.execute_script(
             "return document.body.scrollHeight;")
         if ((screen_height) * self.page >= scroll_height) or self.page > 2:

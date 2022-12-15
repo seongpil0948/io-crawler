@@ -16,6 +16,7 @@ RUN pip3 install -r requirements.txt
 
 # takes all the files located in the current directory and copies them into the image.
 COPY . .
+# FIXME: not working
 RUN echo -c "===> app directory structure:  $(find . -maxdepth 2)"
 
 # ENTRYPOINT ["/bin/echo", "Hello"]

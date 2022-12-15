@@ -13,6 +13,8 @@
             "justMyCode": true,
             "env": {
                 "CredentialPathDev": "/Users/sp/credentials/io-box-develop-firebase-adminsdk-wf6mz-cdb0990f62.json",
+                "SELENIUM_URL": "http://localhost:4444/wd/hub",
+                "CREDENTIAL_PATH": "secrets/io-box-firebase.json",
             }
         },
         {
@@ -23,7 +25,9 @@
             "justMyCode": true,
             "env": {
                 "CredentialPathDev": "/Users/sp/credentials/io-box-develop-firebase-adminsdk-wf6mz-cdb0990f62.json",
-                "SELENIUM_URL": "http://127.0.0.1:4444/wd/hub"
+                "SELENIUM_URL": "http://127.0.0.1:4444/wd/hub",
+                // "SELENIUM_URL": "https://chrome-service-gvozj7um2q-du.a.run.app/wd/hub",
+                "CREDENTIAL_PATH": "secrets/io-box-firebase.json",
             }
         }
     ]
