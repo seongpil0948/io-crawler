@@ -1,7 +1,7 @@
 # from ..logger import IoLogger
+from lib.logger import IoLogger
 import sys
 sys.path.append("/Users/sp/Codes/Io/io-crawler")
-from lib.logger import IoLogger
 
 
 class TestCrawler(IoLogger):
@@ -10,7 +10,7 @@ class TestCrawler(IoLogger):
 
     def __init__(self) -> None:
         super().__init__(self.name)
-        self.log.debug("debug test crawler")
+        self.log.info("info test crawler")
         self.log.info("info test crawler")
         self.log.warning("warn test crawler")
         self.log.error("error test crawler")

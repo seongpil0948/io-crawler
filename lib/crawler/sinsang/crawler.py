@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from uuid import NAMESPACE_DNS, uuid4, uuid5
 import time
 from tqdm import tqdm
+from json import dumps
 import pickle
 from datetime import datetime
 from config import OUT_PATH
@@ -42,8 +43,7 @@ class SinsangCrawler(IoLogger):
         self.entry_url = "https://sinsangmarket.kr"
         self.sinsang_id = "dazzyvely"
         self.sinsang_pw = "*wldnjs0316*"
-        # FIXME self.exist_ids = exist_db_vendor_prod_ids()
-        self.exist_ids = set()
+        self.exist_ids = exist_db_vendor_prod_ids()
         self.exist_cnt = 0
         self.new_ids = set()
         self.lookup_ids = set()
@@ -87,8 +87,8 @@ class SinsangCrawler(IoLogger):
                             EC.element_to_be_clickable(btn))
                         btn.click()  # 로그인!
                         # btn.send_keys(Keys.ENTER)
-                        self.driver.execute_script(
-                            "document.querySelectorAll('.login_option button')[1].click();")
+                        # self.driver.execute_script(
+                        #     "document.querySelectorAll('.login_option button')[1].click();")
                         # self.driver.execute_script("arguments[0].click();", btn)
                         return
         raise Exception("로그인 실패(fail to login)")
@@ -100,12 +100,11 @@ class SinsangCrawler(IoLogger):
             self.log.error(
                 f"occurred while login, url: {self.entry_url} error: {e}")
             self.l(self.driver.get(self.entry_url))
-            self.sleep(1)
+            self.sleep(2)
             el = self.driver.find_element(by=By.TAG_NAME, value="body")
             self.log.warning(f"url element text: {el.text}")
             raise e
-        return self.dispose()
-        self.sleep(2)
+        self.sleep(3)
         t_bar = tqdm(PROD_LIST_URLS)
         for i, obj in enumerate(t_bar):
             desc = f"process sinsang crawler {obj.part}, {obj.ctgr}, {obj.gender}, max_page: {obj.max_page}, idx: {i} url: {obj.url}"
@@ -127,6 +126,7 @@ class SinsangCrawler(IoLogger):
             self.log.info(f"num of exist item: {self.exist_cnt}")
             self.log.info(f"num of new item: {len(list(self.new_ids))}")
 
+        # FIXME :  Object of type datetime is not JSON serializable
         # with open("out/sinsang.json", 'w', encoding='UTF-8-sig') as outfile:
         #     gs = list(map(lambda x: x.__dict__, garments))
         #     outfile.write(
@@ -140,6 +140,7 @@ class SinsangCrawler(IoLogger):
         self.page = 1
         curr_time = datetime.now()
         while True:
+            self.log.info(f"page: {self.page} start")
             for item_list_container in containers:
                 item_list = item_list_container.find_elements(
                     by=By.CSS_SELECTOR, value="[data-group='goods-list']")
@@ -151,9 +152,10 @@ class SinsangCrawler(IoLogger):
                         continue
 
                     thumbnail.click()  # open detail product
-                    self.sleep(1)
-                    vendorProdName = self.driver.find_element(
-                        by=By.CSS_SELECTOR, value=".goods-detail-right p.title").text.strip()
+                    vendorProdName = WebDriverWait(self.driver, 10).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, ".goods-detail-right p.title"))).text.strip()
+                    # vendorProdName = self.driver.find_element(
+                    #     by=By.CSS_SELECTOR, value=".goods-detail-right p.title").text.strip()
                     price_str = self.driver.find_element(
                         by=By.CSS_SELECTOR, value="div.price-box span").text.strip()
 
@@ -223,27 +225,27 @@ class SinsangCrawler(IoLogger):
 
                     self.driver.find_element(
                         by=By.CSS_SELECTOR, value="img.close-button[alt='close-icon']").click()
-                self.sleep(1)
             moreScroll = self.scrolling()
-            self.sleep(1)
-            if moreScroll == False or obj.max_page <= self.page:
+            if moreScroll == False or self.page > obj.max_page:
+                self.page = 1
                 break
+            else:
+                self.page += 1
+                self.sleep(1)
 
         return garments
 
     def scrolling(self) -> bool:
-        scroll_pause_time = 1
         screen_height = self.driver.execute_script(
             "return window.screen.height;")
         factor = self.page * 2
         self.driver.execute_script(
             "window.scrollTo(0, {screen_height}*{factor});".format(screen_height=screen_height, factor=factor))
+        # return True
         scroll_height = self.driver.execute_script(
             "return document.body.scrollHeight;")
-        if ((screen_height) * self.page >= scroll_height) or self.page > 2:
+        if ((screen_height) * self.page >= scroll_height):
             # 스롤 가능 높이보다 화면 높이가 높다면
-            self.page = 1
             return False
         else:
-            self.page += 1
             return True

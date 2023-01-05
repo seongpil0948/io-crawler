@@ -25,7 +25,7 @@ def export_vendor_prod(file_path: str):
     f.close()
 
     garments: list[SinsangGarment] = crawl_data['garments']
-    logger.log.debug(f"{file_path} target garment length: {len(garments)}")
+    logger.log.info(f"{file_path} target garment length: {len(garments)}")
     lookup_ids: set[str] = crawl_data['lookup_ids']
     new_ids: set[str] = crawl_data['new_ids']
     vendor_prod_collection = db.collection(VENDOR_PROD_COLLECTION)
@@ -128,9 +128,9 @@ if __name__ == "__main__":
             if os.path.splitext(f_name)[1] == ".pkl" and f_name not in state["done_files"]:
                 target_fs.append(f_name)
             else:
-                logger.log.debug(f"{f_name} is skipped export target")
+                logger.log.info(f"{f_name} is skipped export target")
 
-        logger.log.debug(f"target_files: {target_fs}" )
+        logger.log.info(f"target_files: {target_fs}")
         set_cnt = 0
         total_cnt = 0
         for target_file in target_fs:
@@ -139,10 +139,11 @@ if __name__ == "__main__":
                 result = export_vendor_prod(file_path)
                 set_cnt += result["set_cnt"]
                 total_cnt += result["total_cnt"]
-                logger.log.debug(
+                logger.log.info(
                     f"processed {file_path} set_cnt: {result['set_cnt']}, total_cnt: {result['total_cnt']}")
             except Exception as e:
-                logger.log.error(f"occurred while export_vendor_prod file: {file_path} error: {e}")
+                logger.log.error(
+                    f"occurred while export_vendor_prod file: {file_path} error: {e}")
                 continue
             state["done_files"].append(target_file)
         logger.log.info(

@@ -1,7 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 # from selenium.webdriver.chrome.service import Service as ChromeService
-from os import environ
+# from os import environ
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
 
 
 class RemoteWrap(webdriver.Remote):
@@ -32,17 +34,16 @@ def get_driver():
     options.add_argument("--window-size=1920,1280")
     options.add_argument(
         "user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36")
-    if environ.get('SELENIUM_URL') is not None:
-        selenium_url = environ.get('SELENIUM_URL')
-        driver = webdriver.Remote(command_executor=selenium_url,
-                                  desired_capabilities=DesiredCapabilities.CHROME, options=options)
-        return driver
-        # return RemoteWrap(selenium_url, DesiredCapabilities.CHROME)
-    else:
-        raise Exception(
-            'No remote Selenium webdriver provided in the environment.')
-    # service = ChromeService(executable_path=ChromeDriverManager().install())
-
-    # driver = webdriver.Chrome(service=service, options=options)
-    # driver.set_window_size(1920, 1280)
-    # return driver
+    # if environ.get('SELENIUM_URL') is not None:
+    #     selenium_url = environ.get('SELENIUM_URL')
+    #     driver = webdriver.Remote(command_executor=selenium_url,
+    #                               desired_capabilities=DesiredCapabilities.CHROME, options=options)
+    #     return driver
+    #     # return RemoteWrap(selenium_url, DesiredCapabilities.CHROME)
+    # else:
+    #     raise Exception(
+    #         'No remote Selenium webdriver provided in the environment.')
+    service = ChromeService(executable_path=ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
+    driver.set_window_size(1920, 1280)
+    return driver
